@@ -35,7 +35,7 @@ export function AboutMe() {
                   fill
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+                
               </div>
             </motion.div>
 
