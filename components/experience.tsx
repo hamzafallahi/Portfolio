@@ -85,7 +85,7 @@ export function Experience() {
         <div className="space-y-4 mb-12">
           <h2 className="text-3xl md:text-4xl font-bold glow-text">Experience</h2>
           <p className="text-muted-foreground">
-            My professional journey and the amazing companies I've worked with.
+            My professional journey and the amazing companies I&apos;ve worked with.
           </p>
         </div>
 
