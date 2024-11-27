@@ -55,7 +55,7 @@ const projects = [
     description: "Designed and developed a responsive task management app with Angular and Spring Boot. Integrated features for task tagging, a Pomodoro timer, and a calendar view for time management.",
     image: "./doiini.webp",
     github: "https://github.com/hamzafallahi/doiini",
-    demo: "doiini.vercel.app",
+    demo: "https://doiini.vercel.app/",
     tags: ["Angular", "Spring Boot", "MySQL"],
     
   },
