@@ -29,18 +29,17 @@ const projects = [
     tags: ["PHP", "AJAX", "MySQL", ".NET"],
     featured: true,
   },
-  {
+
+    {
     id: 3,
-    title: "Doiini - Task Management App",
-    description: "Designed and developed a responsive task management app with Angular and Spring Boot. Integrated features for task tagging, a Pomodoro timer, and a calendar view for time management.",
-    image: "https://images.unsplash.com/photo-1557804506-669a67965ba0",
-    github: "https://github.com/username/doiini",
-    demo: "https://doiini-demo.com",
-    tags: ["Angular", "Spring Boot", "MySQL"],
-    
-  },
-
-
+    title: "Esen Hive Club Website",
+    description: "Designed and developed a web application using Node.js, React, and PostgreSQL for municipal asset management. Integrated JWT authentication to secure user access.",
+    image: "./HIVE.webp",
+    github: "https://github.com/rayen-heroshima/Hive-club-v1.0",
+    demo: "https://drive.google.com/file/d/1nVrumS_sSEqMskdmC3Byt_6hdb7m8GF0/view",
+    tags: ["Node.js", "React", "PostgreSQL", "JWT"],
+  }
+,
   {
     id: 4,
     title: "Référentiel ESG - Web Platform",
@@ -50,9 +49,18 @@ const projects = [
     demo: "https://referentiel-esg-demo.com",
     tags: ["Next.js", "Spring Boot", "JWT", "Docker"],
   
+  },  {
+    id: 5,
+    title: "Doiini - Task Management App",
+    description: "Designed and developed a responsive task management app with Angular and Spring Boot. Integrated features for task tagging, a Pomodoro timer, and a calendar view for time management.",
+    image: "./doiini.webp",
+    github: "https://github.com/hamzafallahi/doiini",
+    demo: "doiini.vercel.app",
+    tags: ["Angular", "Spring Boot", "MySQL"],
+    
   },
   {
-    id: 5,
+    id: 6,
     title: "OPC Client-Server Web App",
     description: "Developed a web application for OPC Client-Server with Spring Boot and Angular to collect, process, and store OPC UA data in MySQL and MongoDB. Implemented features for generating CSV and Excel files.",
     image: "https://images.unsplash.com/photo-1557804506-669a67965ba0",
@@ -61,7 +69,7 @@ const projects = [
     tags: ["Spring Boot", "Angular", "MongoDB", "MySQL", "OPC UA"],
   },
   {
-    id: 6,
+    id: 7,
     title: "Municipal Asset Management Web App",
     description: "Designed and developed a web application using Node.js, React, and PostgreSQL for municipal asset management. Integrated JWT authentication to secure user access.",
     image: "https://images.unsplash.com/photo-1557804506-669a67965ba0",
@@ -69,15 +77,7 @@ const projects = [
     demo: "https://municipal-assets-demo.com",
     tags: ["Node.js", "React", "PostgreSQL", "JWT"],
   },
-    {
-    id: 7,
-    title: "Esen Hive Club Website",
-    description: "Designed and developed a web application using Node.js, React, and PostgreSQL for municipal asset management. Integrated JWT authentication to secure user access.",
-    image: "./HIVE.webp",
-    github: "https://github.com/rayen-heroshima/Hive-club-v1.0",
-    demo: "https://drive.google.com/file/d/1nVrumS_sSEqMskdmC3Byt_6hdb7m8GF0/view",
-    tags: ["Node.js", "React", "PostgreSQL", "JWT"],
-  }
+
 ];
 
 
