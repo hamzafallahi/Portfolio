@@ -14,7 +14,7 @@ const projects = [
     title: "EsenNET Job Fair 2024 Website",
     description: "Created a responsive website for EsenNET Job Fair 2024 using Next.js. Implemented a registration form, email-sending functionality, and data storage in PostgreSQL and Google Sheets.",
     image: "./esen.webp",
-    github: "https://github.com/rayen-heroshima/Esenet-v6.4",
+    github: "",
     demo: "https://esenet-jobfair2024.vercel.app/",
     tags: ["Next.js", "PostgreSQL", "Google Sheets"],
     featured: true,
@@ -25,7 +25,7 @@ const projects = [
     description: "Developed the platform using PHP, AJAX, and MySQL. Implemented authentication features and CRUD operations for courses and users. Created a .NET superadmin app for dashboards and analytics.",
     image: "./9arini.webp",
     github: "https://github.com/hamzafallahi/9arini.tn-MVC-CRUD",
-    demo: "https://9arini-demo.com",
+    demo: "",
     tags: ["PHP", "AJAX", "MySQL", ".NET"],
     featured: true,
   },
@@ -35,7 +35,7 @@ const projects = [
     title: "Esen Hive Club Website",
     description: "Designed and developed a web application using Node.js, React, and PostgreSQL for municipal asset management. Integrated JWT authentication to secure user access.",
     image: "./HIVE.webp",
-    github: "https://github.com/rayen-heroshima/Hive-club-v1.0",
+    github: "",
     demo: "https://drive.google.com/file/d/1nVrumS_sSEqMskdmC3Byt_6hdb7m8GF0/view",
     tags: ["Node.js", "React", "PostgreSQL", "JWT"],
   }
@@ -45,8 +45,8 @@ const projects = [
     title: "Référentiel ESG - Web Platform",
     description: "Built a web platform called 'Référentiel ESG' using Next.js and Spring Boot. Designed the site to inform businesses about ESG practices and provided a paid ESG maturity assessment questionnaire. Developed an e-learning section for the TAA Academy.",
     image: "./taa.webp",
-    github: "https://github.com/username/referentiel-esg",
-    demo: "https://referentiel-esg-demo.com",
+    github: "",
+    demo: "",
     tags: ["Next.js", "Spring Boot", "JWT", "Docker"],
   
   },  {
@@ -63,12 +63,12 @@ const projects = [
     id: 6,
     title: "OPC Client-Server Web App",
     description: "Developed a web application for OPC Client-Server with Spring Boot and Angular to collect, process, and store OPC UA data in MySQL and MongoDB. Implemented features for generating CSV and Excel files.",
-    image: "https://images.unsplash.com/photo-1557804506-669a67965ba0",
-    github: "https://github.com/username/opc-client-server",
-    demo: "https://opc-client-demo.com",
+    image: "./opc.webp",
+    github: "",//https://github.com/hamzafallahi/opc-client-server
+    demo: "",
     tags: ["Spring Boot", "Angular", "MongoDB", "MySQL", "OPC UA"],
   },
-  {
+ /* {
     id: 7,
     title: "Municipal Asset Management Web App",
     description: "Designed and developed a web application using Node.js, React, and PostgreSQL for municipal asset management. Integrated JWT authentication to secure user access.",
@@ -76,7 +76,7 @@ const projects = [
     github: "https://github.com/username/municipal-asset-management",
     demo: "https://municipal-assets-demo.com",
     tags: ["Node.js", "React", "PostgreSQL", "JWT"],
-  },
+  },*/
 
 ];
 
@@ -150,18 +150,22 @@ export function Projects() {
               </div>
             </div>
             <div className="flex gap-4 mt-8">
-              <Button asChild variant="default" size="lg">
-                <Link href={project.github} target="_blank">
-                  <Github className="w-5 h-5 mr-2" />
-                  View Code
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="hover:bg-gradient-to-r" >
-                <Link href={project.demo} target="_blank">
-                  <ExternalLink className="w-5 h-5 mr-2" />
-                  Live Demo
-                </Link>
-              </Button>
+                  {project.github && (
+                    <Button asChild variant="default" size="lg">
+                      <Link href={project.github} target="_blank">
+                        <Github className="w-5 h-5 mr-2" />
+                        View Code
+                      </Link>
+                    </Button>
+                  )}
+                  {project.demo && (
+                    <Button asChild variant="outline" size="lg" className="hover:bg-gradient-to-r">
+                      <Link href={project.demo} target="_blank">
+                        <ExternalLink className="w-5 h-5 mr-2" />
+                        Live Demo
+                      </Link>
+                    </Button>
+                  )}
             </div>
           </div>
         </div>
@@ -211,18 +215,20 @@ export function Projects() {
                       </div>
                       
                       <div className="flex gap-4">
-                        <Button asChild variant="default">
-                          <Link href={project.github} target="_blank">
-                            <Github className="w-4 h-4 mr-2" />
-                            Code
-                          </Link>
-                        </Button>
+                        {project.github && (
+                          <Button asChild variant="default">
+                            <Link href={project.github} target="_blank">
+                              <Github className="w-4 h-4 mr-2" />
+                              Code
+                            </Link>
+                          </Button>)}
+                        {project.demo && (
                         <Button asChild variant="outline">
                           <Link href={project.demo} target="_blank">
                             <ExternalLink className="w-4 h-4 mr-2" />
                             Demo
                           </Link>
-                        </Button>
+                        </Button>)}
                       </div>
                     </div>
                   </div>
