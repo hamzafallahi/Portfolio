@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
+import { Analytics } from '@vercel/analytics/next';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -51,6 +52,7 @@ export default function RootLayout({
           <Navigation />
           <main className="min-h-screen bg-gradient-to-b from-background to-background/95">
             {children}
+            <Analytics />
           </main>
           <Footer />
           <Toaster />
