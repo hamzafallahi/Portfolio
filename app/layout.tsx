@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     "Portfolio",
   ],
   robots: "index, follow",
+  viewport: "width=device-width, initial-scale=1, shrink-to-fit=no",
   openGraph: {
     title: "Titre OpenGraph",
     description: "Description OpenGraph.",
@@ -39,9 +40,12 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
-  return (    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
+}>) {  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      </head>
+      <body className={`${inter.className} overflow-x-hidden`} suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
