@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Github, Linkedin, Facebook, Mail, Phone, MapPin, Trophy } from "lucide-react";
+import { Github, Linkedin, Facebook, Mail, Phone, MapPin, Trophy, Code } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -28,9 +28,8 @@ export function AboutMe() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
-              <div className="aspect-square relative rounded-lg overflow-hidden neon-border">
-                <Image
-                  src="./hamza1.webp"
+              <div className="aspect-square relative rounded-lg overflow-hidden neon-border">                <Image
+                  src="/Hamza2.jpeg"
                   alt="Profile"
                   fill
                   className="object-cover"
@@ -68,13 +67,10 @@ export function AboutMe() {
                     Passionate full-stack developer with 2+ years of experience building scalable web applications.
                     I specialize in NextJs, MERN, Angular/SpringBoot.
                   </p>
-                </Card>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <Card className="p-4 bg-card/50 backdrop-blur hover-card">
+                </Card>                <div className="grid grid-cols-2 gap-4">                  <Card className="p-4 bg-card/50 backdrop-blur hover-card">
                     <div className="flex items-center gap-2">
                       <Trophy className="w-5 h-5 text-primary" />
-                      <span>Business Computing Student</span>
+                      <span>Business Computing graduated with highest honors</span>
                     </div>
                   </Card>
                   <Card className="p-4 bg-card/50 backdrop-blur hover-card">
@@ -106,9 +102,7 @@ export function AboutMe() {
                       {skill}
                     </span>
                   ))}
-                </div>
-
-                <div className="flex gap-4">
+                </div>                <div className="flex gap-4">
                   <Button asChild variant="default" className="hover-card">
                     <Link href="https://github.com/hamzafallahi" target="_blank">
                       <Github className="w-5 h-5 mr-2" />
@@ -125,6 +119,12 @@ export function AboutMe() {
                     <Link href="https://www.facebook.com/hamza.fallahi.12/" target="_blank">
                       <Facebook className="w-5 h-5 mr-2" />
                       Facebook
+                    </Link>
+                  </Button>
+                  <Button asChild variant="default" className="hover-card">
+                    <Link href="https://codeforces.com/profile/hamzafallahi" target="_blank">
+                      <Code className="w-5 h-5 mr-2" />
+                      Codeforces
                     </Link>
                   </Button>
                 </div>
