@@ -99,23 +99,22 @@ export function Projects() {
     <section id="projects" className="py-20 relative animated-bg">
       <div className="absolute inset-0 cyberpunk-grid opacity-10" />
       <MatrixRain />
-      
-      <motion.div
+        <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
-        className="container mx-auto px-4 relative z-10"
+        className="container mx-auto px-4 relative z-10 max-w-full overflow-hidden"
       >
-        <div className="space-y-4 mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold glow-text">Projects</h2>
-          <p className="text-muted-foreground">
+        <div className="space-y-4 mb-8 md:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold glow-text">Projects</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">
             A showcase of my best work and personal projects.
           </p>
         </div>
 
        {/* Featured Projects */}
-<div className="space-y-24 mb-24">
+<div className="space-y-12 md:space-y-24 mb-12 md:mb-24">
   {featuredProjects.map((project, index) => (
     <motion.div
       key={project.id}
@@ -123,12 +122,11 @@ export function Projects() {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       viewport={{ once: true }}
-    >
-      <Card className="overflow-hidden project-card neon-border">
+    >      <Card className="overflow-hidden project-card neon-border">
         <div className="grid md:grid-cols-2 gap-0">
           {/* Image Section */}
           <div
-            className={`relative h-[500px] overflow-hidden ${
+            className={`relative h-[250px] sm:h-[350px] md:h-[500px] overflow-hidden ${
               index % 2 === 1 ? "md:order-2" : ""
             }`}
           >
@@ -140,46 +138,45 @@ export function Projects() {
             />
           </div>
           {/* Text Section */}
-          <div className="p-8 flex flex-col justify-between bg-gradient-to-br from-card/95 to-card/50 backdrop-blur">
-            <div className="space-y-6">
+          <div className="p-4 sm:p-6 md:p-8 flex flex-col justify-between bg-gradient-to-br from-card/95 to-card/50 backdrop-blur">
+            <div className="space-y-4 md:space-y-6">
               <div>
-                <h3 className="text-3xl font-bold mb-2 glow-text">{project.title}</h3>
-                <p className="text-lg text-muted-foreground leading-relaxed">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 glow-text">{project.title}</h3>
+                <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                   {project.description}
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {project.tags.map((tag) => (
+              <div className="flex flex-wrap gap-1 sm:gap-2">                {project.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-sm"
+                    className="px-2 py-1 sm:px-3 bg-primary/10 border border-primary/20 rounded-full text-xs sm:text-sm"
                   >
                     {tag}
                   </span>
                 ))}
               </div>
-            </div>            <div className="flex gap-4 mt-8">
+            </div>
+            <div className="flex flex-wrap gap-2 sm:gap-4 mt-6 md:mt-8">
                   {project.github && (
-                    <Button asChild variant="default" size="lg">
+                    <Button asChild variant="default" size="sm" className="sm:size-lg">
                       <Link href={project.github} target="_blank">
-                        <Github className="w-5 h-5 mr-2" />
-                        View Code
+                        <Github className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+                        <span className="text-xs sm:text-sm">View Code</span>
                       </Link>
                     </Button>
                   )}
                   {project.demo && (
-                    <Button asChild variant="outline" size="lg" className="hover:bg-gradient-to-r">
+                    <Button asChild variant="outline" size="sm" className="sm:size-lg hover:bg-gradient-to-r">
                       <Link href={project.demo} target="_blank">
-                        <ExternalLink className="w-5 h-5 mr-2" />
-                        Live Demo
+                        <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />                        <span className="text-xs sm:text-sm">Live Demo</span>
                       </Link>
                     </Button>
                   )}
                   {project.linkedinPost && (
-                    <Button asChild variant="secondary" size="lg">
+                    <Button asChild variant="secondary" size="sm" className="sm:size-lg">
                       <Link href={project.linkedinPost} target="_blank">
-                        <Eye className="w-5 h-5 mr-2" />
-                        View Details
+                        <Eye className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+                        <span className="text-xs sm:text-sm">View Details</span>
                       </Link>
                     </Button>
                   )}

@@ -27,14 +27,13 @@ export function Navigation() {
   }, []);
 
   return (
-    <>
-      <header
+    <>      <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-background/80 backdrop-blur-sm shadow-lg" : ""
+          isScrolled ? "bg-background/90 backdrop-blur-md shadow-lg" : "bg-background/70 backdrop-blur-sm"
         }`}
       >
-        <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold">
+        <nav className="container mx-auto px-4 h-16 flex items-center justify-between max-w-full">
+          <Link href="/" className="text-lg sm:text-xl font-bold truncate max-w-[150px] sm:max-w-none">
             Hamza Fallahi
           </Link>
 
