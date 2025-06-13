@@ -8,8 +8,34 @@ import { ArrowRight, Briefcase } from "lucide-react";
 import Link from "next/link";
 
 const experiences = [
-    {
+  {
     "id": 1,
+    "company": "Cloud Commit Software Solution",
+    "role": "Web Developer (Full-time)",
+    "period": "JAN 2025 - Present",
+    "description": "Developed a microservice-based appointment booking web application.",
+    "achievements": [
+      "Designed and developed the front-end using React with Atomic Design, React Query, and i18n.",
+      "Built the back-end using Node.js (Express.js), containerized with Docker, and structured with NGINX.",
+      "Integrated caching with Redis and asynchronous communication using RabbitMQ.",
+      "Implemented data serialization/deserialization mechanisms and integrated Keycloak for authentication."
+    ],
+    "technologies": ["React", "Node.js", "Docker", "Redis", "RabbitMQ", "Keycloak", "NGINX"],
+    "link": "https://www.linkedin.com/posts/hamza-fallahi-b3b5b0246_webdevelopment-microservices-reactjs-activity-7334637544271212544-q9yO?utm_source=share&utm_medium=member_desktop&rcm=ACoAADz03V8BPyjjCN1On9TRD4mewVSCm5QMPTk"
+  },  {
+    "id": 2,
+    "company": "Freelance: Tunisian Automotive Association (TAA)",
+    "role": "Full Stack Developer",
+    "period": "OCT 2024 - Present",
+    "description": "Built a web platform called 'Référentiel ESG' using Next.js.",
+    "achievements": [
+      "Designed the site to inform businesses about ESG practices and provided a paid ESG maturity assessment questionnaire."
+    ],
+    "technologies": ["Next.js"],
+    "link": "https://taa-esg.tn"
+  },
+  {
+    "id": 3,
     "company": "Freelance: EsenNET Job Fair 2024",
     "role": "Full Stack Developer",
     "period": "NOV 2024",
@@ -23,22 +49,7 @@ const experiences = [
     "link": "https://esenet-jobfair2024.vercel.app/"
   },
   {
-    "id": 2,
-    "company": "Tunisian Automotive Association (TAA)",
-    "role": "Full Stack Developer",
-    "period": "OCT 2024 - Present",
-    "description": "Led development of scalable web applications using React and Node.js.",
-    "achievements": [
-      "Built a web platform called 'Référentiel ESG' using Next.js and Spring Boot.",
-      "Designed the site to inform businesses about ESG practices.",
-      "Provided a paid ESG maturity assessment questionnaire.",
-      "Developed an e-learning section for the TAA Academy."
-    ],
-    "technologies": ["Next.js", "Spring Boot", "JWT", "Docker"],
-    "link": "https://www.linkedin.com/posts/hamza-fallahi-b3b5b0246_fullstackdevelopment-webdevelopment-taa-activity-7255257562743296000-hSzT?utm_source=share&utm_medium=member_desktop"
-  },
-  {
-    "id": 3,
+    "id": 4,
     "company": "Addixo Smart Factory (Momsoft)",
     "role": "Full Stack Developer",
     "period": "AUG 2024 - SEPT 2024",
@@ -46,25 +57,24 @@ const experiences = [
     "achievements": [
       "Developed a web application for OPC Client-Server with Spring Boot and Angular.",
       "Collected, processed, and stored OPC UA data in MySQL and MongoDB.",
-      "Implemented features for generating CSV and Excel files.",
+      "Implemented features for generating CSV and Excel files."
     ],
     "technologies": ["Spring Boot", "Angular", "MongoDB", "MySQL", "OPC UA"],
     "link": "https://www.linkedin.com/posts/hamza-fallahi-b3b5b0246_internship-smartfactory-tech-activity-7238701535403151360-X-cX?utm_source=share&utm_medium=member_desktop"
   },
   {
-    "id": 4,
+    "id": 5,
     "company": "National Center for Informatics (CNI)",
     "role": "MERN Stack Developer",
     "period": "JUL 2024 - AUG 2024",
     "description": "Developed and implemented new features for the company's main product.",
     "achievements": [
       "Designed and developed a web application for municipal asset management using Node.js, React, and PostgreSQL.",
-      "Integrated JWT authentication to secure user access.",
+      "Integrated JWT authentication to secure user access."
     ],
     "technologies": ["React", "Node.js", "PostgreSQL"],
     "link": "https://www.linkedin.com/posts/hamza-fallahi-b3b5b0246_internship-internship-cni-activity-7219345692123664386-J-rl?utm_source=share&utm_medium=member_desktop"
-  },
-
+  }
 ]
 
 
