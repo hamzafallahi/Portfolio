@@ -7,6 +7,7 @@ import { Github, Linkedin, Facebook, Mail, Phone, MapPin, Trophy, Code } from "l
 import Link from "next/link";
 import Image from "next/image";
 
+
 export function AboutMe() {  return (
     <section id="about" className="relative min-h-screen flex items-center pt-20 md:pt-0">
       {/* Cyberpunk Grid Background */}
