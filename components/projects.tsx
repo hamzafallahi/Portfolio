@@ -7,91 +7,60 @@ import { Github, ExternalLink, Eye } from "lucide-react";
 import { MatrixRain } from "@/components/ui/matrix-rain";
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
-const projects = [
-  {
-    id: 1,
-    title: "AppointNet - Appointment Booking Platform",
-    description: "Developed a microservice-based appointment booking web application at Cloud Commit. Built with React, Node.js, Docker, Redis, and RabbitMQ for optimal scalability and performance.",
-    image: "/appointnet.png",
-    github: "",
-    demo: "",
-    linkedinPost: "https://www.linkedin.com/posts/hamza-fallahi-b3b5b0246_webdevelopment-microservices-reactjs-activity-7334637544271212544-q9yO?utm_source=share&utm_medium=member_desktop&rcm=ACoAADz03V8BPyjjCN1On9TRD4mewVSCm5QMPTk",
-    tags: ["React", "Node.js", "Docker", "Redis", "RabbitMQ", "Keycloak", "NGINX"],
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "Référentiel ESG - Web Platform",
-    description: "Built a web platform using Next.js to inform businesses about ESG practices and provide a paid ESG maturity assessment questionnaire. Developed during PFE internship at TAA.",
-    image: "/TAA ESG REF new.png",
-    github: "",
-    demo: "https://taa-esg.tn",
-    linkedinPost: "https://www.linkedin.com/posts/hamza-fallahi-b3b5b0246_nextjs-esg-sustainability-activity-7334634162630361088-5L6h?utm_source=share&utm_medium=member_desktop&rcm=ACoAADz03V8BPyjjCN1On9TRD4mewVSCm5QMPTk",
-    tags: ["Next.js"],
-    featured: true,
-  },{
-    id: 3,
-    title: "EsenNET Job Fair 2024 Website",
-    description: "Created a responsive website for EsenNET Job Fair 2024 using Next.js. Implemented a registration form, email-sending functionality, and data storage in PostgreSQL and Google Sheets.",
-    image: "/esen.webp",
-    github: "",
-    demo: "https://esenet-jobfair2024.vercel.app/",
-    tags: ["Next.js", "PostgreSQL", "Google Sheets"],
-    featured: false,
-  },    {
-    id: 4,
-    title: "9arini.tn - E-Learning Platform",
-    description: "Developed the platform using PHP, AJAX, and MySQL. Implemented authentication features and CRUD operations for courses and users. Created a .NET superadmin app for dashboards and analytics.",
-    image: "/9arini.webp",
-    github: "https://github.com/hamzafallahi/9arini.tn-MVC-CRUD",
-    demo: "",
-    tags: ["PHP", "AJAX", "MySQL", ".NET"],
-    featured: false,
-  },
-
-    {
-    id: 5,
-    title: "Esen Hive Club Website",
-    description: "Designed and developed a web application using Node.js, React, and PostgreSQL for municipal asset management. Integrated JWT authentication to secure user access.",
-    image: "/HIVE.webp",
-    github: "",
-    demo: "https://drive.google.com/file/d/1nVrumS_sSEqMskdmC3Byt_6hdb7m8GF0/view",
-    tags: ["Node.js", "React", "PostgreSQL", "JWT"],
-  }
-,  {
-    id: 6,
-    title: "Doiini - Task Management App",
-    description: "Designed and developed a responsive task management app with Angular and Spring Boot. Integrated features for task tagging, a Pomodoro timer, and a calendar view for time management.",
-    image: "/doiini.webp",
-    github: "https://github.com/hamzafallahi/doiini",
-    demo: "https://doiini.vercel.app/",
-    tags: ["Angular", "Spring Boot", "MySQL"],
-    
-  },
-  {
-    id: 7,
-    title: "OPC Client-Server Web App",
-    description: "Developed a web application for OPC Client-Server with Spring Boot and Angular to collect, process, and store OPC UA data in MySQL and MongoDB. Implemented features for generating CSV and Excel files.",
-    image: "/opc.webp",
-    github: "",//https://github.com/hamzafallahi/opc-client-server
-    demo: "",
-    tags: ["Spring Boot", "Angular", "MongoDB", "MySQL", "OPC UA"],
-  },
- /* {
-    id: 7,
-    title: "Municipal Asset Management Web App",
-    description: "Designed and developed a web application using Node.js, React, and PostgreSQL for municipal asset management. Integrated JWT authentication to secure user access.",
-    image: "https://images.unsplash.com/photo-1557804506-669a67965ba0",
-    github: "https://github.com/username/municipal-asset-management",
-    demo: "https://municipal-assets-demo.com",
-    tags: ["Node.js", "React", "PostgreSQL", "JWT"],
-  },*/
-
-];
-
+interface Project {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  github: string;
+  demo: string;
+  linkedinPost: string;
+  tags: string[];
+  featured: boolean;
+}
 
 export function Projects() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/projects')
+      .then(res => res.json())
+      .then(data => {
+        setProjects(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to fetch projects:', err);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="projects" className="py-20 relative animated-bg">
+        <div className="container mx-auto px-4 relative z-10 flex justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+            <p className="mt-4 text-muted-foreground">Loading projects...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (projects.length === 0) {
+    return (
+      <section id="projects" className="py-20 relative animated-bg">
+        <div className="container mx-auto px-4 relative z-10 flex justify-center">
+          <p className="text-muted-foreground">No projects found.</p>
+        </div>
+      </section>
+    );
+  }
+
   const featuredProjects = projects.filter(p => p.featured);
   const regularProjects = projects.filter(p => !p.featured);
 

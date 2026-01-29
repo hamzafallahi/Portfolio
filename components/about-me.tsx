@@ -6,9 +6,71 @@ import { Card } from "@/components/ui/card";
 import { Github, Linkedin, Facebook, Mail, Phone, MapPin, Trophy, Code } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
+interface Person {
+  id: number;
+  full_name: string;
+  title: string;
+  bio: string;
+  email: string;
+  phone: string;
+  location: string;
+  image_url: string;
+  technology_tags: string[];
+  social_links: {
+    github: string;
+    linkedin: string;
+    facebook: string;
+    codeforces: string;
+  };
+}
 
-export function AboutMe() {  return (
+export function AboutMe() {
+  const [person, setPerson] = useState<Person | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/person')
+      .then(res => res.json())
+      .then(data => {
+        setPerson(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to fetch person data:', err);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="about" className="relative min-h-screen flex items-center pt-20 md:pt-0">
+        <div className="relative z-10 w-full max-w-full overflow-hidden">
+          <div className="container mx-auto px-4 max-w-full flex justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+              <p className="mt-4 text-muted-foreground">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!person) {
+    return (
+      <section id="about" className="relative min-h-screen flex items-center pt-20 md:pt-0">
+        <div className="relative z-10 w-full max-w-full overflow-hidden">
+          <div className="container mx-auto px-4 max-w-full flex justify-center">
+            <p className="text-muted-foreground">Failed to load person data.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
     <section id="about" className="relative min-h-screen flex items-center pt-20 md:pt-0">
       {/* Cyberpunk Grid Background */}
       <div className="absolute inset-0 cyberpunk-grid opacity-20" />
@@ -30,7 +92,7 @@ export function AboutMe() {  return (
             >
               <div className="aspect-square relative rounded-lg overflow-hidden neon-border max-w-sm mx-auto lg:max-w-none">
                 <Image
-                  src="/Hamza2.jpeg"
+                  src={person.image_url}
                   alt="Profile"
                   fill
                   className="object-cover"
@@ -48,12 +110,12 @@ export function AboutMe() {  return (
               >
                 <h1 
                   className="text-3xl sm:text-4xl md:text-6xl font-bold glitch glow-text break-words"
-                  data-text="Hamza Fallahi"
+                  data-text={person.full_name}
                 >
-                  Hamza Fallahi
+                  {person.full_name}
                 </h1>
                 <h2 className="text-xl sm:text-2xl md:text-3xl text-primary mt-2">
-                  Full Stack Developer
+                  {person.title}
                 </h2>
               </motion.div>
 
@@ -64,8 +126,7 @@ export function AboutMe() {  return (
                 className="space-y-6"
               >                <Card className="p-4 md:p-6 bg-card/50 backdrop-blur hover-card">
                   <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
-                    Passionate full-stack developer with 2+ years of experience building scalable web applications.
-                    I specialize in NextJs, MERN, Angular/SpringBoot.
+                    {person.bio}
                   </p>
                 </Card>                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">                  <Card className="p-3 md:p-4 bg-card/50 backdrop-blur hover-card">
                     <div className="flex items-center gap-2">
@@ -75,23 +136,23 @@ export function AboutMe() {  return (
                   </Card>                  <Card className="p-3 md:p-4 bg-card/50 backdrop-blur hover-card">
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 md:w-5 md:h-5 text-primary flex-shrink-0" />
-                      <span className="text-xs sm:text-sm">Bab Souika, Tunis.</span>
+                      <span className="text-xs sm:text-sm">{person.location}</span>
                     </div>
                   </Card>
                   <Card className="p-3 md:p-4 bg-card/50 backdrop-blur hover-card">
                     <div className="flex items-center gap-2">
                       <Mail className="w-4 h-4 md:w-5 md:h-5 text-primary flex-shrink-0" />
-                      <span className="text-xs sm:text-sm break-all">hamza.fallahi@esen.tn</span>
+                      <span className="text-xs sm:text-sm break-all">{person.email}</span>
                     </div>
                   </Card>
                   <Card className="p-3 md:p-4 bg-card/50 backdrop-blur hover-card">
                     <div className="flex items-center gap-2">
                       <Phone className="w-4 h-4 md:w-5 md:h-5 text-primary flex-shrink-0" />
-                      <span className="text-xs sm:text-sm">+216 50909086</span>
+                      <span className="text-xs sm:text-sm">{person.phone}</span>
                     </div>
                   </Card>
                 </div>                <div className="flex flex-wrap gap-1 sm:gap-2">
-                  {[ "NextJs", "Spring Boot","Nodejs","React", "Angular", "Docker","MongoDB","PostgreSQL","MySQL","Tailwind Css","TypeScript","JavaScript","java" ].map((skill) => (
+                  {person.technology_tags.map((skill) => (
                     <span
                       key={skill}
                       className="px-2 py-1 sm:px-3 bg-primary/10 border border-primary/20 rounded-full text-xs sm:text-sm"
@@ -102,25 +163,25 @@ export function AboutMe() {  return (
                 </div>
 
                 <div className="flex flex-wrap gap-2 sm:gap-4 justify-center lg:justify-start">                  <Button asChild variant="default" className="hover-card text-xs sm:text-sm">
-                    <Link href="https://github.com/hamzafallahi" target="_blank">
+                    <Link href={person.social_links.github} target="_blank">
                       <Github className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
                       <span className="hidden sm:inline">GitHub</span>
                     </Link>
                   </Button>
                   <Button asChild variant="default" className="hover-card text-xs sm:text-sm">
-                    <Link href="https://www.linkedin.com/in/hamza-fallahi-b3b5b0246/" target="_blank">
+                    <Link href={person.social_links.linkedin} target="_blank">
                       <Linkedin className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
                       <span className="hidden sm:inline">LinkedIn</span>
                     </Link>
                   </Button>
                   <Button asChild variant="default" className="hover-card text-xs sm:text-sm">
-                    <Link href="https://www.facebook.com/hamza.fallahi.12/" target="_blank">
+                    <Link href={person.social_links.facebook} target="_blank">
                       <Facebook className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
                       <span className="hidden sm:inline">Facebook</span>
                     </Link>
                   </Button>
                   <Button asChild variant="default" className="hover-card text-xs sm:text-sm">
-                    <Link href="https://codeforces.com/profile/hamzafallahi" target="_blank">
+                    <Link href={person.social_links.codeforces} target="_blank">
                       <Code className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
                       <span className="hidden sm:inline">Codeforces</span>
                     </Link>
