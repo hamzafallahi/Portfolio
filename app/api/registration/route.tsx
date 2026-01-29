@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { google } from "googleapis"
+import { getConnection } from "@/lib/oracle";
 
 
 export const dynamic = 'force-dynamic';
@@ -25,6 +26,35 @@ export async function POST(req: NextRequest) {
   const { name,  email,  subject, message,  } = body;
 
   try {
+    // Save to database
+    const conn = await getConnection();
+    
+    // Get next ID
+    const idResult = await conn.execute(`SELECT NVL(MAX(id), 0) + 1 as next_id FROM contact_message_tab`);
+    const nextId = (idResult.rows![0] as any).NEXT_ID; // eslint-disable-line @typescript-eslint/no-explicit-any
+    
+    await conn.execute(
+      `INSERT INTO contact_message_tab VALUES (
+        contact_message_t(
+          :id,
+          :sender_name,
+          :sender_email,
+          :subject,
+          :message,
+          SYSDATE
+        )
+      )`,
+      {
+        id: nextId,
+        sender_name: name,
+        sender_email: email,
+        subject: subject,
+        message: message,
+      },
+      { autoCommit: true }
+    );
+    await conn.close();
+
     // Create user in the database
 
 
@@ -66,8 +96,6 @@ export async function POST(req: NextRequest) {
   `,
 };
 
-
-
     await transporter.sendMail(mailOptions);
 
     // Handle Google Sheets data append
@@ -108,7 +136,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }
-
-
-
-    
