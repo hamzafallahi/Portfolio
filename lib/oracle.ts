@@ -7,9 +7,9 @@ let pool: oracledb.Pool;
 export async function getConnection() {
   if (!pool) {
     pool = await oracledb.createPool({
-      user: "portfolio",
-      password: "portfolio123",
-      connectString: "localhost:1521/XEPDB1",
+      user: process.env.ORACLE_USER,
+      password: process.env.ORACLE_PASSWORD,
+      connectString: process.env.ORACLE_CONNECTION_STRING,
       poolMin: 1,
       poolMax: 5,
       poolIncrement: 1,
