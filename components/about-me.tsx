@@ -69,6 +69,7 @@ export function AboutMe() {
       </section>
     );
   }
+  //console.log('person.image_url:', person.image_url)
 
   return (
     <section id="about" className="relative min-h-screen flex items-center pt-20 md:pt-0">
@@ -95,6 +96,7 @@ export function AboutMe() {
                   src={person.image_url}
                   alt="Profile"
                   fill
+                  priority
                   className="object-cover"
                 />
               </div>

@@ -19,14 +19,13 @@ export const metadata: Metadata = {
     "Portfolio",
   ],
   robots: "index, follow",
-  viewport: "width=device-width, initial-scale=1, shrink-to-fit=no",
   openGraph: {
     title: "Titre OpenGraph",
     description: "Description OpenGraph.",
-    url: "https://hamzafallahi.vercel.app/",
+    url: "https://hamzafallahi.me/",
     images: [
       {
-        url: "https://hamzafallahi.vercel.app/image.jpg",
+        url: "https://hamzafallahi.me/image.jpg",
         width: 1200,
         height: 630,
         alt: "Description de l'image",
@@ -37,15 +36,17 @@ export const metadata: Metadata = {
         
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {  return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-      </head>
       <body className={`${inter.className} overflow-x-hidden`} suppressHydrationWarning>
         <ThemeProvider
           attribute="class"

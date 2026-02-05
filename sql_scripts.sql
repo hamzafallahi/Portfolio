@@ -183,7 +183,7 @@ INSERT INTO person_tab VALUES (
     'hamza.fallahi@esen.tn',
     '+216 50909086',
     'Bab Souika, Tunis.',
-    'https://www.hamzafallahi.me/Hamza2.jpeg',
+    '/Hamza2.jpeg',
 
     -- technology_tags (nested table)
     technology_list_t(
@@ -538,3 +538,4 @@ INSERT INTO project_tab VALUES (
   )
 );
 
+UPDATE person_tab SET image_url = '/Hamza2.jpeg' WHERE id = 1;
