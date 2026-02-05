@@ -1,6 +1,9 @@
 import { getConnection } from "@/lib/oracle";
 import { NextRequest, NextResponse } from "next/server";
 
+// Owner ID constant - all operations are scoped to this person
+const OWNER_ID = 1;
+
 export async function GET() {
   const conn = await getConnection();
 
@@ -12,8 +15,9 @@ export async function GET() {
            e.description,
            e.link
     FROM experience_tab e
+    WHERE e.owner = (SELECT REF(p) FROM person_tab p WHERE p.id = :ownerId)
     ORDER BY e.id
-  `);
+  `, { ownerId: OWNER_ID });
 
   const experiences = [];
   for (const exp of result.rows as any[]) { // eslint-disable-line @typescript-eslint/no-explicit-any

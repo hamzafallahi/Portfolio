@@ -1,5 +1,8 @@
 import { getConnection } from "@/lib/oracle";
 
+// Owner ID constant - all operations are scoped to this person
+const OWNER_ID = 1;
+
 export async function GET() {
   const conn = await getConnection();
 
@@ -13,8 +16,9 @@ export async function GET() {
            p.linkedin_post,
            p.featured
     FROM project_tab p
+    WHERE p.owner = (SELECT REF(pr) FROM person_tab pr WHERE pr.id = :ownerId)
     ORDER BY p.id
-  `);
+  `, { ownerId: OWNER_ID });
 
   const projects = [];
   for (const proj of result.rows as any[]) { // eslint-disable-line @typescript-eslint/no-explicit-any

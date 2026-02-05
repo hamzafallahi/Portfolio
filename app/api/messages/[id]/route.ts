@@ -1,6 +1,9 @@
 import { getConnection } from "@/lib/oracle";
 import { NextRequest, NextResponse } from "next/server";
 
+// Owner ID constant - all operations are scoped to this person
+const OWNER_ID = 1;
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -19,8 +22,9 @@ export async function GET(
              sent_at
       FROM contact_message_tab
       WHERE id = :id
+        AND owner = (SELECT REF(p) FROM person_tab p WHERE p.id = :ownerId)
     `,
-      [id]
+      { id, ownerId: OWNER_ID }
     );
 
     if (result.rows?.length === 0) {
@@ -63,11 +67,13 @@ export async function PATCH(
       SET subject = :subject,
           message = :message
       WHERE id = :id
+        AND owner = (SELECT REF(p) FROM person_tab p WHERE p.id = :ownerId)
     `,
       {
         id,
         subject: data.subject,
         message: data.message,
+        ownerId: OWNER_ID,
       }
     );
 
@@ -92,8 +98,8 @@ export async function DELETE(
 
   try {
     await conn.execute(
-      `DELETE FROM contact_message_tab WHERE id = :id`,
-      [id]
+      `DELETE FROM contact_message_tab WHERE id = :id AND owner = (SELECT REF(p) FROM person_tab p WHERE p.id = :ownerId)`,
+      { id, ownerId: OWNER_ID }
     );
 
     await conn.commit();

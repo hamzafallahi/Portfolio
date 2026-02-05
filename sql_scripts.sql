@@ -140,7 +140,8 @@ CREATE TYPE contact_message_t AS OBJECT (
   sender_email VARCHAR2(100),
   subject VARCHAR2(200),
   message VARCHAR2(1000),
-  sent_at DATE
+  sent_at DATE,
+  owner REF person_t
 );
 /
 
@@ -151,7 +152,8 @@ CREATE TYPE contact_message_t AS OBJECT (
 
 CREATE TABLE contact_message_tab OF contact_message_t
 (
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  SCOPE FOR (owner) IS person_tab
 );
 
 
@@ -536,46 +538,3 @@ INSERT INTO project_tab VALUES (
   )
 );
 
--- Insert admin user (password: admin123)
-INSERT INTO admin_user (username, password_hash) VALUES (
-  'admin',
-  '$2b$10$cUMNra7b8hGhVS4.FDKSE.Skt3RGhYDL1ItsCJgDTI4bjENjxMIwq' -- bcrypt hash for 'admin123'
-);
-
-COMMIT;
-
-SELECT id, title, featured FROM project_tab;
-SELECT id, company, role FROM experience_tab;
-
-
-
-UPDATE admin_user 
-SET password_hash = '$2b$10$xEGE9nNBkjgnffoWZs195O4y/m91Tm.NQx9k5jWeYeS2.XLzc3yVm'
-WHERE id = 1; -- Replace with actual user ID
-
-
-UPDATE admin_user 
-SET password_hash = '$2b$10$cUMNra7b8hGhVS4.FDKSE.Skt3RGhYDL1ItsCJgDTI4bjENjxMIwq'
-WHERE username = 'admin';
-
-SELECT * FROM admin_user;
-
-
-UPDATE admin_user 
-SET password_hash = '$2b$10$yX6vPb.5q7W7m3Bq3VYJLeC5d5hK8nL2pR9sV1cM3nB7vN8qW2sT4'
-WHERE username = 'admin';
-COMMIT;
-
-
-UPDATE admin_user 
-SET password_hash = '$2b$10$tS4OU0WqAxyU90lXrjUqyeafssTq8.eA6Z8Mkeg7VrOdKFyYGZsEa'
-WHERE username = 'admin';
-
-UPDATE admin_user SET password_hash = '$2b$10$3W.OX/F/kNTgr7jtBO53QuXcIUou6wKz6sNqnJPE9IPwcXF./aUxq' WHERE username = 'admin';
-
-
-
-UPDATE admin_user
-SET password_hash = '$2b$10$3zj9eroJMGueYOEAvSKG0.5I.opgG5qGqs2jt8Gtd8zK.QRuvMBoG'
-WHERE username = 'admin';
-COMMIT;
