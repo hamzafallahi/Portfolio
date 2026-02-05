@@ -1,6 +1,9 @@
 import { getConnection } from "@/lib/oracle";
 import { NextRequest, NextResponse } from "next/server";
 
+// Owner ID constant - all operations are scoped to this person
+const OWNER_ID = 1;
+
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const data = await req.json();
   const { id } = await params;
@@ -18,6 +21,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         linkedin_post = :linkedin_post,
         featured = :featured
       WHERE id = :id
+        AND owner = (SELECT REF(p) FROM person_tab p WHERE p.id = :ownerId)
     `, {
       id,
       title: data.title,
@@ -26,8 +30,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       github_url: data.github,
       demo_url: data.demo,
       linkedin_post: data.linkedinPost,
-      featured: data.featured ? 'Y' : 'N',
-    });
+      featured: data.featured ? 'Y' : 'N',      ownerId: OWNER_ID,    });
 
     // Update tags: delete and insert
     await conn.execute(`DELETE FROM TABLE(SELECT tags FROM project_tab WHERE id = :id)`, [id]);
@@ -59,7 +62,11 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const conn = await getConnection();
 
   try {
-    await conn.execute(`DELETE FROM project_tab WHERE id = :id`, [id], { autoCommit: true });
+    await conn.execute(
+      `DELETE FROM project_tab WHERE id = :id AND owner = (SELECT REF(p) FROM person_tab p WHERE p.id = :ownerId)`,
+      { id, ownerId: OWNER_ID },
+      { autoCommit: true }
+    );
     await conn.close();
 
     return NextResponse.json({ message: "Project deleted successfully" });

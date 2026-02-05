@@ -1,6 +1,9 @@
 import { getConnection } from "@/lib/oracle";
 import { NextResponse } from "next/server";
 
+// Owner ID constant - all operations are scoped to this person
+const OWNER_ID = 1;
+
 export async function GET() {
   const conn = await getConnection();
 
@@ -13,8 +16,9 @@ export async function GET() {
              message,
              sent_at
       FROM contact_message_tab
+      WHERE owner = (SELECT REF(p) FROM person_tab p WHERE p.id = :ownerId)
       ORDER BY sent_at DESC
-    `);
+    `, { ownerId: OWNER_ID });
 
     const messages = result.rows?.map((row: any) => ({
       id: row.ID,

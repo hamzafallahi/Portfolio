@@ -1,6 +1,9 @@
 import { getConnection } from "@/lib/oracle";
 import { NextRequest, NextResponse } from "next/server";
 
+// Owner ID constant - all operations are scoped to this person
+const OWNER_ID = 1;
+
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const data = await req.json();
   const { id } = await params;
@@ -16,14 +19,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         description = :description,
         link = :link
       WHERE id = :id
+        AND owner = (SELECT REF(p) FROM person_tab p WHERE p.id = :ownerId)
     `, {
       id,
       company: data.company,
       role: data.role,
       period: data.period,
       description: data.description,
-      link: data.link,
-    });
+      link: data.link,      ownerId: OWNER_ID,    });
 
     // Update technologies: delete and insert
     await conn.execute(`DELETE FROM TABLE(SELECT technologies FROM experience_tab WHERE id = :id)`, [id]);
@@ -67,7 +70,11 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const conn = await getConnection();
 
   try {
-    await conn.execute(`DELETE FROM experience_tab WHERE id = :id`, [id], { autoCommit: true });
+    await conn.execute(
+      `DELETE FROM experience_tab WHERE id = :id AND owner = (SELECT REF(p) FROM person_tab p WHERE p.id = :ownerId)`,
+      { id, ownerId: OWNER_ID },
+      { autoCommit: true }
+    );
     await conn.close();
 
     return NextResponse.json({ message: "Experience deleted successfully" });

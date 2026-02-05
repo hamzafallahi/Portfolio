@@ -33,6 +33,9 @@ export async function POST(req: NextRequest) {
     const idResult = await conn.execute(`SELECT NVL(MAX(id), 0) + 1 as next_id FROM contact_message_tab`);
     const nextId = (idResult.rows![0] as any).NEXT_ID; // eslint-disable-line @typescript-eslint/no-explicit-any
     
+    // Owner ID constant - all messages are linked to person with id 1
+    const OWNER_ID = 1;
+    
     await conn.execute(
       `INSERT INTO contact_message_tab VALUES (
         contact_message_t(
@@ -41,7 +44,8 @@ export async function POST(req: NextRequest) {
           :sender_email,
           :subject,
           :message,
-          SYSDATE
+          SYSDATE,
+          (SELECT REF(p) FROM person_tab p WHERE p.id = :ownerId)
         )
       )`,
       {
@@ -50,6 +54,7 @@ export async function POST(req: NextRequest) {
         sender_email: email,
         subject: subject,
         message: message,
+        ownerId: OWNER_ID,
       },
       { autoCommit: true }
     );
