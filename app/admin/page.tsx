@@ -10,11 +10,6 @@ import { MessagesTab } from '@/components/admin/messages-tab';
 import { LogOut, Shield, User, Briefcase, Code, Mail } from 'lucide-react';
 
 
-interface JWTPayload {
-  username: string;
-  exp: number;
-  iat: number;
-}
 
 // Simple JWT decode function as fallback
 function decodeJWT(token: string) {

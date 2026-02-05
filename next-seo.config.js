@@ -4,7 +4,7 @@ export default {
   openGraph: {
     type: "website",
     locale: "tn_TN",
-    url: "https://hamzafallahi.vercel.app/",
+    url: "https://hamzafallahi.me/",
     site_name: "Hamza",
   },
 };
