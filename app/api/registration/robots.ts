@@ -5,6 +5,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   res.send(`
     User-agent: *
     Allow: /
-    Sitemap: https://esenet-jobfair2024.vercel.app/sitemap.xml
+    Sitemap: https://hamzafallahi.me/sitemap.xml
   `);
 }
