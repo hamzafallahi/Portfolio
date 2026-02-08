@@ -244,7 +244,7 @@ async function main() {
   const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD!, 10);
   await prisma.adminUser.create({
     data: {
-      username: process.env.ADMIN_USERNAME,
+      username: process.env.ADMIN_USERNAME!,
       passwordHash,
     },
   });
