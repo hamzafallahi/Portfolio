@@ -50,7 +50,7 @@ export default function RootLayout({
       <body className={`${inter.className} overflow-x-hidden`} suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
