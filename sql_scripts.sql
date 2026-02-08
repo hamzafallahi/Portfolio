@@ -539,3 +539,22 @@ INSERT INTO project_tab VALUES (
 );
 
 UPDATE person_tab SET image_url = '/Hamza2.jpeg' WHERE id = 1;
+
+
+
+SELECT *
+FROM project_tab ;
+
+
+
+SELECT COUNT(*) FROM project_tab;
+SELECT * FROM project_tab;
+
+
+
+ALTER SESSION SET STATISTICS_LEVEL = BASIC;
+COMMIT;
+
+
+
+
