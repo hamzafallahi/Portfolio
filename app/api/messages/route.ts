@@ -1,39 +1,33 @@
-import { getConnection } from "@/lib/oracle";
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-// Owner ID constant - all operations are scoped to this person
-const OWNER_ID = 1;
-
 export async function GET() {
-  const conn = await getConnection();
+  const owner = await prisma.person.findFirst();
+  if (!owner) {
+    return NextResponse.json({ message: "No owner found" }, { status: 404 });
+  }
 
   try {
-    const result = await conn.execute(`
-      SELECT id,
-             sender_name,
-             sender_email,
-             subject,
-             message,
-             sent_at
-      FROM contact_message_tab
-      WHERE owner = (SELECT REF(p) FROM person_tab p WHERE p.id = :ownerId)
-      ORDER BY sent_at DESC
-    `, { ownerId: OWNER_ID });
+    const messages = await prisma.contactMessage.findMany({
+      where: { personId: owner.id },
+      orderBy: { sentAt: "desc" },
+    });
 
-    const messages = result.rows?.map((row: any) => ({
-      id: row.ID,
-      sender_name: row.SENDER_NAME,
-      sender_email: row.SENDER_EMAIL,
-      subject: row.SUBJECT,
-      message: row.MESSAGE,
-      sent_at: row.SENT_AT,
-    })) || [];
+    const mapped = messages.map((row) => ({
+      id: row.id,
+      sender_name: row.senderName,
+      sender_email: row.senderEmail,
+      subject: row.subject,
+      message: row.message,
+      sent_at: row.sentAt,
+    }));
 
-    await conn.close();
-
-    return NextResponse.json(messages);
+    return NextResponse.json(mapped);
   } catch (error) {
     console.error("Error fetching messages:", error);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

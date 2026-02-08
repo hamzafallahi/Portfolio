@@ -2,12 +2,11 @@ import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get('authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  const token = req.cookies.get('token')?.value;
+
+  if (!token) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
-
-  const token = authHeader.substring(7);
 
   try {
     jwt.verify(token, process.env.JWT_SECRET!);

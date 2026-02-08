@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { PersonTab } from '@/components/admin/person-tab';
@@ -9,59 +9,14 @@ import { ExperiencesTab } from '@/components/admin/experiences-tab';
 import { MessagesTab } from '@/components/admin/messages-tab';
 import { LogOut, Shield, User, Briefcase, Code, Mail } from 'lucide-react';
 
-
-
-// Simple JWT decode function as fallback
-function decodeJWT(token: string) {
-  try {
-    const payload = token.split('.')[1];
-    const decoded = JSON.parse(atob(payload));
-    return decoded;
-  } catch (error) {
-    throw new Error('Invalid token');
-  }
-}
-
 export default function AdminPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('person');
   const router = useRouter();
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    // Verify token client-side
-    try {
-      const decoded = decodeJWT(token); // Use fallback decode function
-      const currentTime = Math.floor(Date.now() / 1000);
-
-      if (decoded.exp && decoded.exp < currentTime) {
-        throw new Error('Token expired');
-      }
-
-      setIsAuthenticated(true);
-    } catch (error) {
-      localStorage.removeItem('token');
-      router.push('/login');
-    }
-  }, [router]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    router.push('/');
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
   };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
 
   const tabs = [
     { id: 'person', label: 'Person', icon: User },

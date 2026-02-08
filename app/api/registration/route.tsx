@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { google } from "googleapis"
-import { getConnection } from "@/lib/oracle";
+import { prisma } from "@/lib/prisma";
 
 
 export const dynamic = 'force-dynamic';
@@ -27,38 +27,20 @@ export async function POST(req: NextRequest) {
 
   try {
     // Save to database
-    const conn = await getConnection();
-    
-    // Get next ID
-    const idResult = await conn.execute(`SELECT NVL(MAX(id), 0) + 1 as next_id FROM contact_message_tab`);
-    const nextId = (idResult.rows![0] as any).NEXT_ID; // eslint-disable-line @typescript-eslint/no-explicit-any
-    
-    // Owner ID constant - all messages are linked to person with id 1
-    const OWNER_ID = 1;
-    
-    await conn.execute(
-      `INSERT INTO contact_message_tab VALUES (
-        contact_message_t(
-          :id,
-          :sender_name,
-          :sender_email,
-          :subject,
-          :message,
-          SYSDATE,
-          (SELECT REF(p) FROM person_tab p WHERE p.id = :ownerId)
-        )
-      )`,
-      {
-        id: nextId,
-        sender_name: name,
-        sender_email: email,
+    const owner = await prisma.person.findFirst();
+    if (!owner) {
+      return NextResponse.json({ message: 'No owner found' }, { status: 404 });
+    }
+
+    await prisma.contactMessage.create({
+      data: {
+        senderName: name,
+        senderEmail: email,
         subject: subject,
         message: message,
-        ownerId: OWNER_ID,
+        personId: owner.id,
       },
-      { autoCommit: true }
-    );
-    await conn.close();
+    });
 
     // Create user in the database
 

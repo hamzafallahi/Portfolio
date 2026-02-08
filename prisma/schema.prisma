@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Person {
+  id             String           @id @default(uuid())
+  fullName       String           @map("full_name")
+  title          String
+  bio            String
+  email          String
+  phone          String
+  location       String
+  imageUrl       String?          @map("image_url")
+  technologyTags String[]         @map("technology_tags")
+  github         String?
+  linkedin       String?
+  facebook       String?
+  codeforces     String?
+
+  projects        Project[]
+  experiences     Experience[]
+  contactMessages ContactMessage[]
+
+  @@map("person")
+}
+
+model Project {
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  imageUrl     String?  @map("image_url")
+  githubUrl    String?  @map("github_url")
+  demoUrl      String?  @map("demo_url")
+  linkedinPost String?  @map("linkedin_post")
+  featured     Boolean  @default(false)
+  tags         String[]
+
+  personId String @map("person_id")
+  person   Person @relation(fields: [personId], references: [id])
+
+  @@map("project")
+}
+
+model Experience {
+  id           String   @id @default(uuid())
+  company      String
+  role         String
+  period       String
+  description  String
+  link         String?
+  technologies String[]
+  achievements String[]
+
+  personId String @map("person_id")
+  person   Person @relation(fields: [personId], references: [id])
+
+  @@map("experience")
+}
+
+model ContactMessage {
+  id          String   @id @default(uuid())
+  senderName  String   @map("sender_name")
+  senderEmail String   @map("sender_email")
+  subject     String
+  message     String
+  sentAt      DateTime @default(now()) @map("sent_at")
+
+  personId String @map("person_id")
+  person   Person @relation(fields: [personId], references: [id])
+
+  @@map("contact_message")
+}
+
+model AdminUser {
+  id           String @id @default(uuid())
+  username     String @unique
+  passwordHash String @map("password_hash")
+
+  @@map("admin_user")
+}
