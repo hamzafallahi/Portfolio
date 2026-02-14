@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import type { Project } from "@prisma/client";
 
 export async function GET() {
   const owner = await prisma.person.findFirst();
@@ -11,7 +12,7 @@ export async function GET() {
     orderBy: { id: "asc" },
   });
 
-  const mapped = projects.map((proj) => ({
+  const mapped = projects.map((proj: Project) => ({
     id: proj.id,
     title: proj.title,
     description: proj.description,

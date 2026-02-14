@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import type { ContactMessage } from "@prisma/client";
 
 export async function GET() {
   const owner = await prisma.person.findFirst();
@@ -13,7 +14,7 @@ export async function GET() {
       orderBy: { sentAt: "desc" },
     });
 
-    const mapped = messages.map((row) => ({
+    const mapped = messages.map((row: ContactMessage) => ({
       id: row.id,
       sender_name: row.senderName,
       sender_email: row.senderEmail,

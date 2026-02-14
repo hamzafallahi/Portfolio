@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import type { Experience } from "@prisma/client";
 
 export async function GET() {
   const owner = await prisma.person.findFirst();
@@ -12,7 +13,7 @@ export async function GET() {
     orderBy: { id: "asc" },
   });
 
-  const mapped = experiences.map((exp) => ({
+  const mapped = experiences.map((exp: Experience) => ({
     id: exp.id,
     company: exp.company,
     role: exp.role,
