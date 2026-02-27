@@ -160,7 +160,7 @@ export function Projects() {
 
         {/* Regular Projects Grid */}
         {regularProjects.length > 0 && (
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {regularProjects.map((project, index) => (
               <motion.div
                 key={project.id}
@@ -168,9 +168,10 @@ export function Projects() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
+                className="w-full min-w-0"
               >
-                <Card className="overflow-hidden project-card h-[600px] flex flex-col">
-                  <div className="relative h-[300px] overflow-hidden">
+                <Card className="overflow-hidden project-card flex flex-col w-full">
+                  <div className="relative h-[200px] sm:h-[250px] md:h-[280px] overflow-hidden flex-shrink-0">
                     <Image
                       src={project.image}
                       alt={project.title}
@@ -179,43 +180,43 @@ export function Projects() {
                     />
                   </div>
                   
-                  <div className="p-6 flex flex-col flex-grow bg-gradient-to-b from-card/95 to-card/50">
-                    <h3 className="text-2xl font-bold mb-4">{project.title}</h3>
-                    <p className="text-muted-foreground mb-6 flex-grow">
+                  <div className="p-4 sm:p-6 flex flex-col flex-grow bg-gradient-to-b from-card/95 to-card/50 min-w-0">
+                    <h3 className="text-xl sm:text-2xl font-bold mb-3 break-words">{project.title}</h3>
+                    <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 flex-grow break-words overflow-hidden">
                       {project.description}
                     </p>
                     
-                    <div className="space-y-6">
-                      <div className="flex flex-wrap gap-2">
+                    <div className="space-y-4">
+                      <div className="flex flex-wrap gap-1 sm:gap-2">
                         {project.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="px-2 py-1 bg-primary/10 border border-primary/20 rounded-full text-sm"
+                            className="px-2 py-1 bg-primary/10 border border-primary/20 rounded-full text-xs sm:text-sm"
                           >
                             {tag}
                           </span>
                         ))}
                       </div>
-                        <div className="flex gap-4">
+                      <div className="flex flex-wrap gap-2 sm:gap-3">
                         {project.github && (
-                          <Button asChild variant="default">
+                          <Button asChild variant="default" size="sm">
                             <Link href={project.github} target="_blank">
-                              <Github className="w-4 h-4 mr-2" />
-                              Code
+                              <Github className="w-4 h-4 mr-1 sm:mr-2" />
+                              <span className="text-xs sm:text-sm">Code</span>
                             </Link>
                           </Button>)}
                         {project.demo && (
-                        <Button asChild variant="outline">
+                        <Button asChild variant="outline" size="sm">
                           <Link href={project.demo} target="_blank">
-                            <ExternalLink className="w-4 h-4 mr-2" />
-                            Demo
+                            <ExternalLink className="w-4 h-4 mr-1 sm:mr-2" />
+                            <span className="text-xs sm:text-sm">Demo</span>
                           </Link>
                         </Button>)}
                         {project.linkedinPost && (
-                          <Button asChild variant="secondary">
+                          <Button asChild variant="secondary" size="sm">
                             <Link href={project.linkedinPost} target="_blank">
-                              <Eye className="w-4 h-4 mr-2" />
-                              Details
+                              <Eye className="w-4 h-4 mr-1 sm:mr-2" />
+                              <span className="text-xs sm:text-sm">Details</span>
                             </Link>
                           </Button>
                         )}

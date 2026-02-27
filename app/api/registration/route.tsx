@@ -42,6 +42,44 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // Send notification email to owner
+    const notificationMailOptions = {
+      from: process.env.FROM_EMAIL_GMAIL,
+      to: 'hamza.fallahi@esen.tn',
+      subject: `New Contact Message: ${subject}`,
+      html: `
+        <div style="font-family: 'Arial', sans-serif; padding: 20px; background-color: #f9fafc; color: #333;">
+          <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); overflow: hidden;">
+            <div style="background-color: #004b6d; padding: 20px; color: #ffffff; text-align: center;">
+              <h1 style="font-size: 24px; margin: 0;">New Contact Message Received</h1>
+            </div>
+            <div style="padding: 30px;">
+              <p style="font-size: 18px; line-height: 1.6; color: #555;">
+                Hi Hamza,
+              </p>
+              <p style="font-size: 16px; line-height: 1.6; color: #555;">
+                You have received a new contact message through your portfolio. Here are the details:
+              </p>
+              <div style="margin-top: 20px; background: #f4f7fa; padding: 20px; border-radius: 5px;">
+                <p style="font-size: 16px; margin: 0;"><strong>From:</strong> ${name} (${email})</p>
+                <p style="font-size: 16px; margin: 0; margin-top: 10px;"><strong>Subject:</strong> ${subject}</p>
+                <p style="font-size: 16px; margin: 0; margin-top: 10px;"><strong>Message:</strong></p>
+                <p style="font-size: 16px; margin: 0; color: #555;">${message}</p>
+              </div>
+              <p style="margin-top: 20px; font-size: 16px; color: #555;">
+                Please respond to this message at your earliest convenience.
+              </p>
+            </div>
+            <div style="background-color: #f9fafc; padding: 10px 20px; text-align: center; font-size: 14px; color: #aaa;">
+              <p style="margin: 0;">&copy; 2024 Hamza Fallahi. All rights reserved.</p>
+            </div>
+          </div>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(notificationMailOptions);
+
     // Create user in the database
 
 
