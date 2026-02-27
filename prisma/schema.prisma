@@ -42,6 +42,7 @@ model Project {
   linkedinPost String?  @map("linkedin_post")
   featured     Boolean  @default(false)
   tags         String[]
+  sortOrder    Int      @default(0) @map("sort_order")
 
   personId String @map("person_id")
   person   Person @relation(fields: [personId], references: [id])
@@ -58,6 +59,7 @@ model Experience {
   link         String?
   technologies String[]
   achievements String[]
+  sortOrder    Int      @default(0) @map("sort_order")
 
   personId String @map("person_id")
   person   Person @relation(fields: [personId], references: [id])

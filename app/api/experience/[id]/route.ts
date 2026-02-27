@@ -53,6 +53,23 @@ export async function DELETE(
       where: { id, personId: owner.id },
     });
 
+    // Re-normalize sort orders after deletion to keep them sequential
+    const remaining = await prisma.experience.findMany({
+      where: { personId: owner.id },
+      orderBy: { sortOrder: "asc" },
+      select: { id: true },
+    });
+    if (remaining.length > 0) {
+      await prisma.$transaction(
+        remaining.map((exp, index) =>
+          prisma.experience.update({
+            where: { id: exp.id },
+            data: { sortOrder: index },
+          })
+        )
+      );
+    }
+
     return NextResponse.json({ message: "Experience deleted successfully" });
   } catch (error) {
     console.error(error);

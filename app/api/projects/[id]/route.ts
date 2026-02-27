@@ -54,6 +54,25 @@ export async function DELETE(
       where: { id, personId: owner.id },
     });
 
+    // Re-normalize sort orders after deletion for both sections
+    for (const featured of [true, false]) {
+      const remaining = await prisma.project.findMany({
+        where: { personId: owner.id, featured },
+        orderBy: { sortOrder: "asc" },
+        select: { id: true },
+      });
+      if (remaining.length > 0) {
+        await prisma.$transaction(
+          remaining.map((proj, index) =>
+            prisma.project.update({
+              where: { id: proj.id },
+              data: { sortOrder: index },
+            })
+          )
+        );
+      }
+    }
+
     return NextResponse.json({ message: "Project deleted successfully" });
   } catch (error) {
     console.error(error);

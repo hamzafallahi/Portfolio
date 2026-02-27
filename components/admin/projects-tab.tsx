@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,12 +8,17 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Edit, Trash2, X } from 'lucide-react';
+import { Plus, Edit, Trash2, X, GripVertical, Star } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  type DropResult,
+} from '@hello-pangea/dnd';
 
 interface Project {
-  id: number;
+  id: string;
   title: string;
   description: string;
   image: string;
@@ -22,6 +27,7 @@ interface Project {
   linkedinPost: string;
   tags: string[];
   featured: boolean;
+  sortOrder: number;
 }
 
 export function ProjectsTab() {
@@ -44,7 +50,7 @@ export function ProjectsTab() {
         const data = await res.json();
         setProjects(data);
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to fetch projects",
@@ -93,7 +99,7 @@ export function ProjectsTab() {
       } else {
         throw new Error('Failed to save');
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to save project",
@@ -102,7 +108,7 @@ export function ProjectsTab() {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this project?')) return;
 
     try {
@@ -119,7 +125,7 @@ export function ProjectsTab() {
       } else {
         throw new Error('Failed to delete');
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to delete project",
@@ -145,9 +151,135 @@ export function ProjectsTab() {
     }));
   };
 
+  // Derived lists
+  const featuredProjects = projects
+    .filter(p => p.featured)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+  const regularProjects = projects
+    .filter(p => !p.featured)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+
+  const saveOrder = useCallback(async (featured: Project[], regular: Project[]) => {
+    try {
+      const res = await fetch('/api/projects/reorder', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          featuredIds: featured.map(p => p.id),
+          regularIds: regular.map(p => p.id),
+        }),
+      });
+
+      if (!res.ok) throw new Error('Failed to save order');
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to save order. Refreshing...",
+        variant: "destructive",
+      });
+      fetchProjects();
+    }
+  }, [toast]);
+
+  const onDragEnd = useCallback((result: DropResult) => {
+    const { source, destination } = result;
+    if (!destination) return;
+
+    const sourceDroppable = source.droppableId as 'featured' | 'regular';
+    const destDroppable = destination.droppableId as 'featured' | 'regular';
+
+    // Build mutable copies
+    const featured = [...featuredProjects];
+    const regular = [...regularProjects];
+
+    const sourceList = sourceDroppable === 'featured' ? featured : regular;
+    const destList = destDroppable === 'featured' ? featured : regular;
+
+    // Remove from source
+    const [moved] = sourceList.splice(source.index, 1);
+
+    // Update featured flag if moving between sections
+    if (sourceDroppable !== destDroppable) {
+      moved.featured = destDroppable === 'featured';
+    }
+
+    // Insert into destination
+    destList.splice(destination.index, 0, moved);
+
+    // Re-index sortOrder
+    const updatedFeatured = featured.map((p, i) => ({ ...p, sortOrder: i, featured: true }));
+    const updatedRegular = regular.map((p, i) => ({ ...p, sortOrder: i, featured: false }));
+
+    setProjects([...updatedFeatured, ...updatedRegular]);
+    saveOrder(updatedFeatured, updatedRegular);
+  }, [featuredProjects, regularProjects, saveOrder]);
+
   if (loading) {
     return <div className="text-center py-8">Loading projects...</div>;
   }
+
+  const renderProjectItem = (project: Project, index: number) => (
+    <Draggable
+      key={project.id}
+      draggableId={String(project.id)}
+      index={index}
+    >
+      {(provided, snapshot) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+            snapshot.isDragging
+              ? 'bg-primary/10 border-primary shadow-lg'
+              : 'bg-card hover:bg-muted/50 border-border'
+          }`}
+        >
+          <div
+            {...provided.dragHandleProps}
+            className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground"
+          >
+            <GripVertical className="w-5 h-5" />
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-medium truncate">{project.title}</span>
+            </div>
+            <div className="flex flex-wrap gap-1 mt-1">
+              {project.tags.slice(0, 3).map((tag) => (
+                <Badge key={tag} variant="outline" className="text-xs">
+                  {tag}
+                </Badge>
+              ))}
+              {project.tags.length > 3 && (
+                <Badge variant="outline" className="text-xs">
+                  +{project.tags.length - 3}
+                </Badge>
+              )}
+            </div>
+          </div>
+
+          <div className="flex gap-1 flex-shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => openDialog(project)}
+            >
+              <Edit className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleDelete(project.id)}
+              className="text-destructive hover:text-destructive"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+    </Draggable>
+  );
 
   return (
     <div className="space-y-6">
@@ -264,58 +396,68 @@ export function ProjectsTab() {
         </Dialog>
       </div>
 
-      <Card className="p-6">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Featured</TableHead>
-              <TableHead>Tags</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {projects.map((project) => (
-              <TableRow key={project.id}>
-                <TableCell className="font-medium">{project.title}</TableCell>
-                <TableCell>{project.featured ? 'Yes' : 'No'}</TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-1">
-                    {project.tags.slice(0, 3).map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                    {project.tags.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{project.tags.length - 3}
-                      </Badge>
-                    )}
+      <p className="text-sm text-muted-foreground">
+        Drag and drop to reorder projects within a section, or drag between sections to change featured status.
+      </p>
+
+      <DragDropContext onDragEnd={onDragEnd}>
+        {/* Featured Projects Section */}
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+            <h3 className="text-lg font-semibold">Featured Projects</h3>
+            <Badge variant="secondary" className="ml-auto">{featuredProjects.length}</Badge>
+          </div>
+
+          <Droppable droppableId="featured">
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className={`space-y-2 min-h-[60px] rounded-md p-2 transition-colors ${
+                  snapshot.isDraggingOver ? 'bg-yellow-500/5 border border-dashed border-yellow-500/30' : ''
+                }`}
+              >
+                {featuredProjects.map((project, index) => renderProjectItem(project, index))}
+                {provided.placeholder}
+                {featuredProjects.length === 0 && !snapshot.isDraggingOver && (
+                  <div className="text-center py-4 text-sm text-muted-foreground">
+                    No featured projects. Drag a project here to feature it.
                   </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openDialog(project)}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(project.id)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                )}
+              </div>
+            )}
+          </Droppable>
+        </Card>
+
+        {/* Regular Projects Section */}
+        <Card className="p-4 mt-4">
+          <div className="flex items-center gap-2 mb-3">
+            <h3 className="text-lg font-semibold">Other Projects</h3>
+            <Badge variant="secondary" className="ml-auto">{regularProjects.length}</Badge>
+          </div>
+
+          <Droppable droppableId="regular">
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className={`space-y-2 min-h-[60px] rounded-md p-2 transition-colors ${
+                  snapshot.isDraggingOver ? 'bg-primary/5 border border-dashed border-primary/30' : ''
+                }`}
+              >
+                {regularProjects.map((project, index) => renderProjectItem(project, index))}
+                {provided.placeholder}
+                {regularProjects.length === 0 && !snapshot.isDraggingOver && (
+                  <div className="text-center py-4 text-sm text-muted-foreground">
+                    No other projects. Drag a project here to un-feature it.
                   </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+                )}
+              </div>
+            )}
+          </Droppable>
+        </Card>
+      </DragDropContext>
     </div>
   );
 }

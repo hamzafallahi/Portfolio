@@ -10,7 +10,7 @@ export async function GET() {
 
   const experiences = await prisma.experience.findMany({
     where: { personId: owner.id },
-    orderBy: { id: "asc" },
+    orderBy: { sortOrder: "asc" },
   });
 
   const mapped = experiences.map((exp: Experience) => ({
@@ -22,6 +22,7 @@ export async function GET() {
     link: exp.link,
     technologies: exp.technologies,
     achievements: exp.achievements,
+    sortOrder: exp.sortOrder,
   }));
 
   return NextResponse.json(mapped);
@@ -36,6 +37,13 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // New items go to the end: find the current max sortOrder
+    const maxSort = await prisma.experience.aggregate({
+      where: { personId: owner.id },
+      _max: { sortOrder: true },
+    });
+    const nextOrder = (maxSort._max.sortOrder ?? -1) + 1;
+
     await prisma.experience.create({
       data: {
         company: data.company,
@@ -45,6 +53,7 @@ export async function POST(req: NextRequest) {
         link: data.link,
         technologies: data.technologies || [],
         achievements: data.achievements || [],
+        sortOrder: nextOrder,
         personId: owner.id,
       },
     });

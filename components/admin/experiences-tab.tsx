@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,12 +8,17 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Edit, Trash2, X } from 'lucide-react';
+import { Plus, Edit, Trash2, X, GripVertical } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  type DropResult,
+} from '@hello-pangea/dnd';
 
 interface Experience {
-  id: number;
+  id: string;
   company: string;
   role: string;
   period: string;
@@ -21,6 +26,7 @@ interface Experience {
   link: string;
   technologies: string[];
   achievements: string[];
+  sortOrder: number;
 }
 
 export function ExperiencesTab() {
@@ -44,7 +50,7 @@ export function ExperiencesTab() {
         const data = await res.json();
         setExperiences(data);
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to fetch experiences",
@@ -94,7 +100,7 @@ export function ExperiencesTab() {
       } else {
         throw new Error('Failed to save');
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to save experience",
@@ -103,7 +109,7 @@ export function ExperiencesTab() {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this experience?')) return;
 
     try {
@@ -120,7 +126,7 @@ export function ExperiencesTab() {
       } else {
         throw new Error('Failed to delete');
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to delete experience",
@@ -128,6 +134,38 @@ export function ExperiencesTab() {
       });
     }
   };
+
+  const saveOrder = useCallback(async (items: Experience[]) => {
+    try {
+      const res = await fetch('/api/experience/reorder', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds: items.map(e => e.id) }),
+      });
+
+      if (!res.ok) throw new Error('Failed to save order');
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to save order. Refreshing...",
+        variant: "destructive",
+      });
+      fetchExperiences();
+    }
+  }, [toast]);
+
+  const onDragEnd = useCallback((result: DropResult) => {
+    if (!result.destination) return;
+    if (result.source.index === result.destination.index) return;
+
+    const reordered = Array.from(experiences);
+    const [moved] = reordered.splice(result.source.index, 1);
+    reordered.splice(result.destination.index, 0, moved);
+
+    const updated = reordered.map((exp, i) => ({ ...exp, sortOrder: i }));
+    setExperiences(updated);
+    saveOrder(updated);
+  }, [experiences, saveOrder]);
 
   const addTech = () => {
     if (newTech.trim() && !formData.technologies?.includes(newTech.trim())) {
@@ -284,44 +322,79 @@ export function ExperiencesTab() {
         </Dialog>
       </div>
 
-      <Card className="p-6">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Company</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Period</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {experiences.map((experience) => (
-              <TableRow key={experience.id}>
-                <TableCell className="font-medium">{experience.company}</TableCell>
-                <TableCell>{experience.role}</TableCell>
-                <TableCell>{experience.period}</TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openDialog(experience)}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(experience.id)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+      <p className="text-sm text-muted-foreground">
+        Drag and drop to reorder experiences. The order here is reflected on the public site.
+      </p>
+
+      <Card className="p-4">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="experiences">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-2">
+                {experiences.map((experience, index) => (
+                  <Draggable
+                    key={experience.id}
+                    draggableId={String(experience.id)}
+                    index={index}
+                  >
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+                          snapshot.isDragging
+                            ? 'bg-primary/10 border-primary shadow-lg'
+                            : 'bg-card hover:bg-muted/50 border-border'
+                        }`}
+                      >
+                        <div
+                          {...provided.dragHandleProps}
+                          className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground"
+                        >
+                          <GripVertical className="w-5 h-5" />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium truncate">{experience.company}</span>
+                            <span className="text-muted-foreground">—</span>
+                            <span className="text-sm text-muted-foreground truncate">{experience.role}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-0.5">{experience.period}</p>
+                        </div>
+
+                        <div className="flex gap-1 flex-shrink-0">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openDialog(experience)}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDelete(experience.id)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+
+                {experiences.length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No experiences yet. Click &quot;Add Experience&quot; to get started.
                   </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                )}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </Card>
     </div>
   );
