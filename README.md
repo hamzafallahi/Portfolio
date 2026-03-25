@@ -1,6 +1,7 @@
 # Portfolio Admin Interface
 
 This is a comprehensive portfolio website with an admin interface for content management.
+![Repo Views](https://views.whatilearened.today/views/github/hamzafallahi/Portfolio.svg)
 
 ## Features
 
