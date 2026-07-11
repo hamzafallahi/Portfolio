@@ -58,7 +58,7 @@ export function Footer() {
                 <Linkedin className="w-6 h-6" />
               </Link>
               <Link
-                href="https://www.facebook.com/hamza.fallahi.12/"
+                href="/"
                 target="_blank"
                 className="text-muted-foreground hover:text-primary transition-colors"
               >
